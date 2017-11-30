@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/security-network/SSMProject#readme",
   "dependencies": {
-    "coap": "^0.21.0"
+    "coap": "^0.21.0",
+    "coap-packet": "^0.1.14",
+    "coap-router": "^1.0.0"
   }
 }
