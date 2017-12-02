@@ -1,9 +1,9 @@
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose')
 
 var index = require('./routes/app');
 var api = require('./routes/api');
@@ -23,9 +23,22 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use('/dashboard', dashboard);
 app.use('/api', api);
 app.use('/', index);
+
+//================================
+var options = {
+  useMongoClient: true,
+  autoIndex: false, // Don't build indexes
+  reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
+  reconnectInterval: 500, // Reconnect every 500ms
+  poolSize: 10, // Maintain up to 10 socket connections
+  // If not connected, return errors immediately rather than waiting for reconnect
+  bufferMaxEntries: 0
+};
+mongoose.connect('mongodb://127.0.0.1:27017', options);
+
+//===================================
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -45,4 +58,5 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+app.listen(3000, () => console.log('Example app listening on port 3000!'))
 module.exports = app;

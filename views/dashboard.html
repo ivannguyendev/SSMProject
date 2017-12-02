@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Dashboard</title>
+	<style>
+		body{
+			width: 100%;
+		}
+		#dashboard {
+			margin-left: 10%;
+			width: 400px;
+			height: 200px;
+			float: left;
+			line-height: 1.5rem;
+		}
+
+		#detail {
+			line-height: 1.5rem;
+			width: auto;
+			height: 200px;
+			float: left;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="dashboard">
+		<span>Danh sách các Sensor của bạn!</span>
+	</div>
+	<div id="detail">
+		<span>Thông tin chi tiết Sersor của bạn!</span>
+		<br> Name Sersor:
+		<span id="namesersor"> null</span>
+		<br> Protocol:
+		<span id="protocolsersor"> null</span>
+		<br> Ip Address:
+		<span id="ipaddsersor"> null</span>
+		<br>
+		<span> Các phương thức điều khiển </span>
+		<br>
+		<br>
+		<button type="button" onclick="alert('Hello world!')"> GET </button>
+		<button type="button" onclick="alert('Hello world!')"> POST </button>
+	</div>
+</body>
+
+</html>
