@@ -1,24 +1,17 @@
 {
   "name": "ssmproject",
-  "version": "1.0.0",
-  "description": "SSM is manager system that provide connect between another device IOT",
-  "main": "index.js",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./bin/www"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/security-network/SSMProject.git"
-  },
-  "author": "N.G.U",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/security-network/SSMProject/issues"
-  },
-  "homepage": "https://github.com/security-network/SSMProject#readme",
   "dependencies": {
-    "coap": "^0.21.0",
-    "coap-packet": "^0.1.14",
-    "coap-router": "^1.0.0"
+    "body-parser": "~1.18.2",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.15.5",
+    "morgan": "~1.9.0",
+    "pug": "2.0.0-beta11",
+    "serve-favicon": "~2.4.5"
   }
 }
