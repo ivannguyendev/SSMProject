@@ -8,20 +8,15 @@ var User = new nUser()
 /* GET users listing. */
 router.get('/login', function(req, res, next) {
   var input = req.body
-  User.findOne({username : input.username})
-  .exec(function(err, token){
-    if(err){
-      res.status(401).send({code : 404, success : false, status : "404 error connecting to user data", results: err})
-    }
-    else if(!token){
-      res.status(401).send({code : 401, success : false, status : "401 invalid token"})
-    }
-    else if(token) {
-      // TEST: it should track req user
-      req.user = token.user 
-      next()
-    }
-  })
+  var data = {
+    username : input.username || res.status(401).send({code : 401, success : false, status : "401 not username"}),
+    hashpass:  req.password || res.status(401).send({code : 401, success : false, status : "401 not password"})
+  }
+  User.findOne({username: self._id},function(err, res){
+    if(err) next(new Error('User not found'))
+    else if(self) next(new Error('User not found'))
+    else next()
+})
 });
 
 //middleware
