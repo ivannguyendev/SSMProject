@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "nodemon ./bin/www"
   },
   "dependencies": {
     "aes-js": "^3.1.0",
@@ -12,6 +12,7 @@
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "~4.15.5",
+    "jsonwebtoken": "^8.1.0",
     "lodash.foreach": "^4.5.0",
     "moment": "^2.19.3",
     "mongoose": "^4.13.5",

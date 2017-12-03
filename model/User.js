@@ -2,20 +2,35 @@ var mongoose = require('mongoose')
 var moment = require('moment')
 var token = require('./Token')
 
-var userSchema = mongoose.Schema({
+var userSchema = new mongoose.Schema({
     username: String,
     hashpass: String,
-    sensor: {type: String, ref: 'Sensor'}
+    status: {type: String, options: 'ONLINE, OFFLINE'},
+    sensor: {type: String, ref: 'Sensor'},
+
 });
 
 userSchema.pre('save', function(next){
     let self = this
-    mongoose.model('User', userSchema).findOne({username: self._id},function(err, res){
-        if(err) next(new Error('User not found'))
-        else if(self) next(new Error('User not found'))
-        else next()
-    })
+    if(self.isNew && self.username && self.hashpass) {
+        mongoose.model('Users').findOne({username: self.username},function(err, res){
+            // console.log(JSON.stringify(this) + JSON.stringify(err))
+            if(err) next(new Error('Error network'))
+            else if(res) next(new Error('User existed'))
+            else next()
+        })
+    } else {
+        mongoose.model('Users').findOne({username: self.username},function(err, res){
+            if(err) next(new Error('User not found'))
+            else if(!res) next(new Error('User not found'))
+            else next()
+        })
+    }
 })
 
-var User = mongoose.model('User', userSchema);
+var User = mongoose.model('Users', userSchema);
+// User.create({username: 'admin', hashpass: 'admin'}, function (err, res){
+//     if(error || !result) console.log('Register failed')
+//     else console.log('Register successful')
+// })
 module.exports = User

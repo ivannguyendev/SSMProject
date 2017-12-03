@@ -42,7 +42,24 @@ var options = {
   // If not connected, return errors immediately rather than waiting for reconnect
   bufferMaxEntries: 0
 };
-mongoose.connect('mongodb://127.0.0.1:27017/SSM', options);
+
+
+Promise = require('bluebird'); // // make bluebird default Promise eslint-disable-line no-global-assign
+
+//Url address Database
+const mongoDb = 'mongodb://localhost:27017/SSM'
+
+// plugin bluebird promise in mongoose
+mongoose.Promise = Promise;
+//Database
+mongoose.connect(mongoDb,{
+  useMongoClient: true
+});
+
+//Get the default connection
+var db = mongoose.connection;
+//Bind connection to error event (to get notification of connection errors)
+mongoose.connection.on('error', console.error.bind(console,'connection error: '));
 
 //===================================
 

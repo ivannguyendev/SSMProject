@@ -1,9 +1,11 @@
 var mongoose = require('mongoose')
 var moment = require('moment')
-var tokenSchema = mongoose.Schema({
+var tokenSchema = new mongoose.Schema({
     token: String,
-    expired : {type: Date, default: moment()}
+    status: {type: String, options: 'USING ,EXPIRED, CANCELLED'},
+    expired : {type: Date}
 });
-var token = mongoose.model('Token', tokenSchema);
+
+var token = mongoose.model('Tokens', tokenSchema);
 
 module.exports = token
