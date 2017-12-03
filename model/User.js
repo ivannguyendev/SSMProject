@@ -14,7 +14,6 @@ userSchema.pre('save', function(next){
     let self = this
     if(self.isNew && self.username && self.hashpass) {
         mongoose.model('Users').findOne({username: self.username},function(err, res){
-            console.log(JSON.stringify(this) + JSON.stringify(err))
             if(err) next(new Error('Error network'))
             else if(res) next(new Error('User existed'))
             else next()

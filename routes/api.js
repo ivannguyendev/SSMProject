@@ -6,18 +6,21 @@ var jwt = require('jsonwebtoken')
 var configs = require('./configs')
 var moment = require('moment')
 
-/* GET users listing. */
-router.get('/login', function(req, res, next) {
+/* POST users listing. */
+router.post('/login', function(req, res, next) {
   var input = req.body
-  if(input.username || input.password) res.status(401).send({code : 401, success : false, status : "401 not username"})
+  if(!input.username || !input.password) res.status(401).send({code : 401, success : false, status : "401 not username or password"})
   else {
-    User.findOne({username: self._id, hashpass: input.password, status: 'OFFLINE'},function(error, result){
+    User.findOne({username: input.username, hashpass: input.password, status: 'OFFLINE'},function(error, result){
       if(error) res.status(400).json({code : 400, success : false, status: 'Error network'})
       else if(!result) res.status(400).json({code : 400, success : false, status: 'User not found'})
       else {
-        var jwtToken = jwt.sign({username: input.username, hashpass: input.password}, config.jwtSecret, { expiresIn: 1 * 7 });
-        Token.create({token: jwt, status: 'USING', expried: moment().add(30, 'day')}, (error, result)=>{
-          if(error || !result) res.status(400).json({code : 400, success : false, status: 'User not found'})
+        var jwtToken = jwt.sign({username: input.username, hashpass: input.password}, configs.jwtSecret, { expiresIn: 1 * 7 });
+        new Token({token: jwtToken.toString(), 
+          status: 'USING', 
+          expired: moment().add(7, 'day')
+        }).save((error, result)=>{
+          if(error || !result) res.status(400).json({code : 400, success : false, status: error ? error : 'Not create token'})
           else res.status(200).json({code : 200, success : true, token : result.token})
         })
       }
@@ -34,7 +37,7 @@ router.post('/register', function(req, res, next) {
       hashpass: req.body.password,
       status: 'OFFLINE',
     }).save( function(error, result){
-      if(error || !result) res.status(400).json({code : 400, success : false, status: 'Register failed'})
+      if(error || !result) res.status(400).json({code : 400, success : false, status: error ? error : 'Register failed'})
       else res.status(200).json({code : 200, success : true, status: 'Register successful'})
     })
   }
