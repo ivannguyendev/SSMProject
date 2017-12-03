@@ -1,3 +1,5 @@
+
+
 var express = require('express');
 var path = require('path');
 var logger = require('morgan');
@@ -7,6 +9,8 @@ var mongoose = require('mongoose')
 
 var index = require('./routes/app');
 var api = require('./routes/api');
+var sensor = require('./routes/apisensor');
+var mqtt = require('./routes/mqtt');
 
 var app = express();
 
@@ -25,6 +29,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', api);
 app.use('/', index);
+app.use('/sensor', sensor);
+app.use('/mqtt', mqtt);
 
 //================================
 var options = {
@@ -36,7 +42,7 @@ var options = {
   // If not connected, return errors immediately rather than waiting for reconnect
   bufferMaxEntries: 0
 };
-mongoose.connect('mongodb://127.0.0.1:27017', options);
+mongoose.connect('mongodb://127.0.0.1:27017/SSM', options);
 
 //===================================
 
