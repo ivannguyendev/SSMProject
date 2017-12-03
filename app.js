@@ -1,5 +1,3 @@
-
-
 var express = require('express');
 var path = require('path');
 var logger = require('morgan');
@@ -29,8 +27,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', api);
 app.use('/', index);
-app.use('/sensor', sensor);
-app.use('/mqtt', mqtt);
 
 //================================
 var options = {
@@ -42,7 +38,11 @@ var options = {
   // If not connected, return errors immediately rather than waiting for reconnect
   bufferMaxEntries: 0
 };
-mongoose.connect('mongodb://127.0.0.1:27017/SSM', options);
+
+mongoose.Promise = Promise;
+mongoose.createConnection('mongodb://127.0.0.1:27017/SSM', options);
+// plugin bluebird promise in mongoose
+mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 //===================================
 
