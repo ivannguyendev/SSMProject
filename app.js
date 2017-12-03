@@ -36,7 +36,11 @@ var options = {
   // If not connected, return errors immediately rather than waiting for reconnect
   bufferMaxEntries: 0
 };
-mongoose.connect('mongodb://127.0.0.1:27017', options);
+
+mongoose.Promise = Promise;
+mongoose.createConnection('mongodb://127.0.0.1:27017/SSM', options);
+// plugin bluebird promise in mongoose
+mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 //===================================
 
