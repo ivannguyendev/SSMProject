@@ -29,13 +29,13 @@ router.post('/register', function(req, res, next) {
   req.isNew = true
   if(!req.body.username || req.body.username == '' || !req.body.password || req.body.password == '') res.status(400).json({code : 400, success : false, status: 'Username or Password is empty'})
   else {
-    User.create({
+    new User({
       username: req.body.username,
       hashpass: req.body.password,
       status: 'OFFLINE',
-    }, function(error, result){
+    }).save( function(error, result){
       if(error || !result) res.status(400).json({code : 400, success : false, status: 'Register failed'})
-      else res.status(200).JSON({code : 200, success : true, status: 'Register successful'})
+      else res.status(200).json({code : 200, success : true, status: 'Register successful'})
     })
   }
 });
