@@ -1,8 +1,10 @@
 var forEach = require('lodash.foreach');
 var ObjectID = require('mongodb').ObjectID;
+
 const   mongoose = require('mongoose'),
         sensorlModel = require('../model/Sensor'),
-        userModel = require('../model/User');
+        userModel = require('../model/User'), 
+        coap = require('./libs/coap')
 
 module.exports = { 
     createSensor: function(req, res){
@@ -39,6 +41,16 @@ module.exports = {
               } else {
                 return res.status(200).json(result.sensor)
               }
+        })
+    },
+
+    getDataSensor: function(req, res){
+        var input = req.query
+        coap.getSensor(input, function(err, res){
+            if(err || !res) res.status(400).json(err)
+            else {
+                res.status(200).json(result.sensor)
+            }
         })
     },
 
