@@ -96,12 +96,13 @@ router.post('/sensor/create', Sensor.createSensor);
 
 /* GET sensors listing. */
 router.get('/sensor/:ip', function (req, res, next) {
- request('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY', { json: true }, (err, res, body) => {
-   if (err || !res) { return console.log(err); }
-   else {
-    console.log(body + res)
-   }
- });
+  let ip = req.query.ip || 'aaaa::212:7402:2:202'
+  request('http://192.168.225.130:3000/temp/'+ ip, { json: true }, (err, res, body) => {
+    if (err || !res) { return console.log(err); }
+    else {
+     console.log(res)
+    }
+  });
 });
 
 /* POST sensors listing. */

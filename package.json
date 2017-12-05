@@ -20,6 +20,7 @@
     "mqtt": "^2.14.0",
     "nodemon": "^1.12.1",
     "pug": "2.0.0-beta11",
+    "request": "^2.83.0",
     "serve-favicon": "~2.4.5"
   }
 }
