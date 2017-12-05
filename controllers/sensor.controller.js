@@ -2,68 +2,47 @@ var forEach = require('lodash.foreach');
 var ObjectID = require('mongodb').ObjectID;
 const   mongoose = require('mongoose'),
         sensorlModel = require('../model/Sensor'),
-        sensorCtl = require('../sensors/thermometer');
-
-function ledOnOff(req, res){
-    // console.log('a');
-    var coap = require('coap')
-    , server = coap.createServer()
-  
-    server.on('request', function(req, res) {
-    res.end('Hello ' + req.url.split('/')[1] + '\n')
-     })
-  
-     // the default CoAP port is 5683
-    server.listen(function() {
-    var req = coap.request('http://192.168.225.1')
-  
-    req.on('response', function(res) {
-      res.pipe(process.stdout)
-      res.on('end', function() {
-        // process.exit(0)
-      })
-    })
-  
-     req.end()
-    })
-}
+        userModel = require('../model/User');
 
 module.exports = { 
     createSensor: function(req, res){
-        var sensor = new sensorlModel({
+        new sensorlModel({
             _id: new ObjectID(),
-            name: req.body.name,
+            name: req.body.name ? req.body.name : req.body.ip,
             ip: req.body.ip,
-            protocol: req.body.protocol
-        }).save(function(err){
-            if(err){
-                res.status(504);
+            protocol: req.body.protocol ? req.body.protocol : '',
+            user: req.body.username
+        }).save(function(error, sensors){
+            if(error || !sensors){
+                res.status(401).json('Error network');
                 res.end();
             }else{
-                console.log('saved');
-                return res.status(200).json({
-                    message: 'Saved'
-                });
+                userModel.findOne({username: req.body.username}).exec((error, users)=>{
+                    if(error || !users) return res.status(500).json(error)
+                    else {
+                        users.sensor.addToSet(sensors._id)
+                        users.save()
+                        return res.status(200).json(users)
+                    }
+                })
             }
         })
     },
 
     getSensor: function(req, res){
-
-        sensorlModel.find({}, function(err, sensors) {
-            if (err) {
-              return res.status(500).json({
-                err: err || err.errmessage
-              })
-            } else {
-              return res.status(200).json(sensors)
-            }
-          })
+        var input = req.query
+        userModel.findOne({username: input.username})
+        .populate({path : 'sensor', model: sensorlModel})
+        .exec(function(error, result){
+            if (error || !result) {
+                return res.status(500).json(error)
+              } else {
+                return res.status(200).json(result.sensor)
+              }
+        })
     },
 
     postSensor: function(req, res){
-    
-        console.log(req.query.ip);
         sensorlModel.find({}, function(err, sensors) {
             if (err) {
                 return res.status(500).json({

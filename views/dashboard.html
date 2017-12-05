@@ -4,13 +4,15 @@
 <head>
 	<title>Dashboard</title>
 	<style>
-		body{
+		body {
 			width: 100%;
 		}
-		#dashboard {
+
+		#mySensor {
 			margin-left: 10%;
 			width: 400px;
-			height: 200px;
+			max-height: 600px;
+			min-height: 300px;
 			float: left;
 			line-height: 1.5rem;
 		}
@@ -18,18 +20,57 @@
 		#detail {
 			line-height: 1.5rem;
 			width: auto;
-			height: 200px;
+			max-height: 600px;
+			min-height: 300px;
 			float: left;
+		}
+
+		.itemsensor {
+			width: auto;
+			border: 1px solid #cfcfcf;
+			margin: 10px;
+			padding: 3px;
+			text-align: center
+		}
+
+		.itemsensor:hover {
+			color: white;
+			background-color: rgb(13, 211, 43);
+		}
+
+		.itemsensor:active,
+		.active {
+			background-color: rgb(12, 202, 40);
+		}
+
+		.notify {
+			text-align: center;
+			display: none;
+			color: white;
 		}
 	</style>
 </head>
 
 <body>
-	<div id="dashboard">
-		<span>Danh sách các Sensor của bạn!</span>
+	<div id="mySensor" style="position:relative;border: 1px solid #bbbbbb; margin-right: 30px; padding: 30px">
+		<div style="border-bottom: 1px solid #bbbbbb; text-align:center; ">Danh sách các Sensor của bạn!</div>
+		<br>
+		<div id='list-container' style="overflow:auto; max-height: 270px; margin-bottom: 30px"></div>
+		<div style="position:absolute; bottom: 5px">
+			<div class='notify notify-failed' style="background-color:rgb(233, 38, 38); ">
+				<span class='notify-text'></span>
+			</div>
+			<div class='notify notify-success' style="background-color:rgb(53, 211, 32);">
+				<span class='notify-text'></span>
+			</div>
+			<input id="ipadd" type="text" name="Text" placeholder="Địa chỉ IP sensor">
+			<button id="btnaddsensor" type="button" onclick="">Thêm sensor</button>
+		</div>
+
+
 	</div>
-	<div id="detail">
-		<span>Thông tin chi tiết Sersor của bạn!</span>
+	<div id="detail" style="border: 1px solid #bbbbbb; margin-right: 30px; padding: 30px">
+		<span>Thông tin chi tiết Sensor của bạn!</span>
 		<br> Name Sersor:
 		<span id="namesersor"> null</span>
 		<br> Protocol:
@@ -37,18 +78,103 @@
 		<br> Ip Address:
 		<span id="ipaddsersor"> null</span>
 		<br>
+		<br>
+		<div id='datasensor' style="border: 1px solid #bbbbbb; margin-right: 30px; padding: 30px">
+
+		</div>
 		<span> Các phương thức điều khiển </span>
 		<br>
 		<br>
-		<button type="button" onclick="alert('Hello world!')"> GET </button>
-		<form action="/action_page.php">
-			User name:<br>
-			  <input type="text" name="Text">
-			  <br>
-		  </form> 
-		<button type="button" onclick="alert('Hello world!')"> POST </button>
-
+		<span> Lấy dữ liệu</span>
+		<button id='postTest' type="button" onclick=""> Lấy nhiệt độ </button>
+		<button id='postTest' type="button" onclick=""> Lấy ánh sáng </button>
+		<br>
+		<form action="">
+			<span> Bật tắt đèn</span>
+			<input id='rbnG' name="color" type="radio" value="G"> xanh </button>
+			<input id='rbnR' name="color" type="radio" value="R"> đỏ </button>
+			<input id='rbnB' name="color" type="radio" value="B"> dương </button>
+		</form>
+		<button id='postTest' type="button" onclick=""> ON </button>
+		<br>
+		<br>
+		<span> Chuỗi led</span>
+		<input type="text" name="Text" placeholder="Gửi đoạn văn bản">
+		<button id='postTest' type="button" onclick=""> POST </button>
 	</div>
 </body>
 
 </html>
+<script src="./js/jquery-3.2.1.min.js"></script>
+<script>
+	$(function () {
+		const HOST = 'http://127.0.0.1:3000'
+		var listSensor = []
+		var insertList = function (item) {
+			listSensor.push(item)
+			$("#list-container").append("<div id='sensor'" + (listSensor.length++) + " class='itemsensor'>" + item.ip + "</div>")
+		}
+		var deleteList = function (item) {
+			listSensor.push(item)
+		}
+		$("#btnaddsensor").on("click", function (event) {
+			var data = {
+				ip: $("#ipadd").val(),
+				username: localStorage.getItem('username')
+			}
+			$.ajax({
+				url: "/api/sensor/create",
+				method: 'POST',
+				contentType: 'application/json',
+				dataType: "json",
+				headers:{
+					token: localStorage.getItem('token'),
+				},
+				data: JSON.stringify(data),
+				success: function (result) {
+					insertList(data)
+					$(".notify-text").text('Add sensor successful');
+					$(".notify-failed").hide();
+					$(".notify-success").show();
+				},
+				error: function (jqXHR, exc) {
+					let json = $.parseJSON(jqXHR.responseText)
+					$(".notify-text").text(json.status);
+					$(".notify-success").hide();
+					$(".notify-failed").show();
+				}
+			});
+		})
+
+		$( function (event) {
+			var data = {
+				username: localStorage.getItem('username')
+			}
+			$.ajax({
+				url: "/api/sensor",
+				method: 'GET',
+				contentType: 'application/json',
+				dataType: "json",
+				headers:{
+					token: localStorage.getItem('token'),
+				},
+				data: data,
+				success: function (result) {
+					result.map((element, i)=>{
+						insertList(element)
+					})
+					$(".notify-failed").hide();
+				},
+				error: function (jqXHR, exc) {
+					let json = $.parseJSON(jqXHR.responseText)
+					$(".notify-text").text(json.status);
+					$(".notify-success").hide();
+					$(".notify-failed").show();
+				}
+			});
+		})
+	}
+
+	)
+
+</script>

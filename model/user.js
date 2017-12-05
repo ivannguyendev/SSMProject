@@ -6,8 +6,7 @@ var userSchema = new mongoose.Schema({
     username: String,
     hashpass: String,
     status: {type: String, options: 'ONLINE, OFFLINE'},
-    sensor: {type: String, ref: 'Sensor'},
-
+    sensor: [{type: mongoose.Schema.Types.ObjectId, ref: 'Sensor'}],
 });
 
 userSchema.pre('save', function(next){

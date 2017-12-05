@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var Token = require('./../model/Token')
 var User = require('./../model/User')
+var Sensor = require('./../controllers/sensor.controller')
 var jwt = require('jsonwebtoken')
 var configs = require('./configs')
 var moment = require('moment')
@@ -87,6 +88,9 @@ router.get('/logout', function(req, res, next) {
   }
 });
 
+/* POST sensors listing. */
+router.post('/sensor/create', Sensor.createSensor);
+
 /* GET sensors listing. */
 router.get('/sensor/:ip', function(req, res, next) {
     res.send('respond with a resource');
@@ -98,8 +102,7 @@ router.post('/sensor/:ip', function(req, res, next) {
 });
 
 /* GET sensors listing. */
-router.get('/sensor', function(req, res, next) {
-  res.send('respond with a resource');
-});
+router.get('/sensor', Sensor.getSensor);
+
 
 module.exports = router;

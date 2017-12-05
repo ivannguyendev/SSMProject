@@ -1,20 +1,69 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Login</title>
 </head>
+
 <body>
-		<form action="/api/login">
- 		 User name:<br>
-			<input type="text" name="userid">
-			<br>
-		User password:<br>
-			<input type="password" name="psw">
-			<br>
-		</form> <br>
-		<button id='login' >Login</button>
+	<form action="/api/login">
+		User name:
+		<br>
+		<input id='username' type="text" name="username">
+		<br> Password:
+		<br>
+		<input id='password' type="password" name="psw">
+		<br>
+	</form>
+	<br>
+	<button id='login'>Login</button>
+	<br>
+	<br>
+	<div class='notify-failed' style="text-align:center; display:none; background-color:rgb(233, 38, 38); color: white; width: 300px; height: 30px">
+		<span class='notify-text'></span>
+	</div>
+	<div class='notify-success' style="text-align:center; display:none; background-color:rgb(53, 211, 32); color: white; width: 300px; height: 30px">
+		<span class='notify-text'></span>
+	</div>
 </body>
+
 </html>
+<script src="./js/jquery-3.2.1.min.js"></script>
 <script>
-	
+	$(function () {
+		const HOST = 'http://127.0.0.1:3000'
+		$("#login").on("click", function (event) {
+			var username = $('#username').val();
+			var password =  $('#password').val();
+			localStorage.removeItem('token')
+			localStorage.removeItem('username')
+			$.ajax({
+				url: "/api/login",
+				method: 'POST',
+				contentType: 'application/json',
+				dataType: "json",
+				data: JSON.stringify({
+					username: username,
+					password: password
+				}),
+				success: function (result) {
+					localStorage.setItem('token',result.token)
+					localStorage.setItem('username', username)
+					$(".notify-text").text('Loggin successful');
+					$(".notify-failed").hide();
+					$(".notify-success").show();
+					window.location.href = HOST + "/dashboard";					
+				},
+				error: function (jqXHR, exc) {
+					let json = $.parseJSON(jqXHR.responseText)
+					$(".notify-text").text(json['status']);
+					$(".notify-success").hide();
+					$(".notify-failed").show();
+				}
+			});
+		})
+	}
+
+	)
+
 </script>

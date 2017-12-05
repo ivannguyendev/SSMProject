@@ -7,8 +7,6 @@ var mongoose = require('mongoose')
 
 var index = require('./routes/app');
 var api = require('./routes/api');
-var sensor = require('./routes/apisensor');
-var mqtt = require('./routes/mqtt');
 
 var app = express();
 
