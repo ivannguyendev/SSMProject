@@ -25,7 +25,7 @@
 			float: left;
 		}
 
-		.itemsensor {
+		button .itemsensor {
 			width: auto;
 			border: 1px solid #cfcfcf;
 			margin: 10px;
@@ -33,12 +33,12 @@
 			text-align: center
 		}
 
-		.itemsensor:hover {
+		button .itemsensor:hover {
 			color: white;
 			background-color: rgb(13, 211, 43);
 		}
 
-		.itemsensor:active,
+		button .itemsensor:active,
 		.active {
 			background-color: rgb(12, 202, 40);
 		}
@@ -72,35 +72,30 @@
 	<div id="detail" style="border: 1px solid #bbbbbb; margin-right: 30px; padding: 30px">
 		<span>Thông tin chi tiết Sensor của bạn!</span>
 		<br> Name Sersor:
-		<span id="namesersor"> null</span>
+		<span id="name"> null</span>
 		<br> Protocol:
-		<span id="protocolsersor"> null</span>
+		<span id="protocol"> null</span>
 		<br> Ip Address:
-		<span id="ipaddsersor"> null</span>
+		<span id="ip"> null</span>
 		<br>
 		<br>
 		<div id='datasensor' style="border: 1px solid #bbbbbb; margin-right: 30px; padding: 30px">
 
 		</div>
-		<span> Các phương thức điều khiển </span>
 		<br>
-		<br>
-		<span> Lấy dữ liệu</span>
-		<button id='postTest' type="button" onclick=""> Lấy nhiệt độ </button>
-		<button id='postTest' type="button" onclick=""> Lấy ánh sáng </button>
-		<br>
-		<form action="">
+		<span> Các phương thức điều khiển : </span>
+		<form action="" style="display : none">
 			<span> Bật tắt đèn</span>
 			<input id='rbnG' name="color" type="radio" value="G"> xanh </button>
 			<input id='rbnR' name="color" type="radio" value="R"> đỏ </button>
 			<input id='rbnB' name="color" type="radio" value="B"> dương </button>
 		</form>
-		<button id='postTest' type="button" onclick=""> ON </button>
+		<button id='postTest' type="button" onclick="" style="display : none"> ON </button>
 		<br>
 		<br>
-		<span> Chuỗi led</span>
-		<input type="text" name="Text" placeholder="Gửi đoạn văn bản">
-		<button id='postTest' type="button" onclick=""> POST </button>
+		<span style="display : none"> Chuỗi led</span>
+		<input type="text" name="Text" placeholder="Gửi đoạn văn bản" style="display : none">
+		<button id='postTest' type="button" onclick="" style="display : none"> POST </button>
 	</div>
 </body>
 
@@ -110,12 +105,38 @@
 	$(function () {
 		const HOST = 'http://127.0.0.1:3000'
 		var listSensor = []
-		var insertList = function (item) {
-			listSensor.push(item)
-			$("#list-container").append("<div id='sensor'" + (listSensor.length++) + " class='itemsensor'>" + item.ip + "</div>")
+		var functions = {
+			deleteList: function (item) {
+				listSensor.push(item)
+			},
+			insertList : function (item) {
+			listSensor[item._id] = item
+			$("#list-container").append("<button id='" + item._id + "'" + " class='itemsensor'>" + item.ip + "</button>")
+			$("#" + item._id).on("click", function (event) {
+				// alert("The paragraph was clicked."  + listSensor[item._id].name );
+				$('#name').text(listSensor[item._id].name)
+				$('#protocol').text(listSensor[item._id].protocol)
+				$('#ip').text(listSensor[item._id].ip)
+			})
+		},
+		getData: function(){
+			$.ajax({
+				url: "/api/sensor/create",
+				method: 'GET',
+				contentType: 'application/json',
+				dataType: "json",
+				headers: {
+					token: localStorage.getItem('token'),
+				},
+				success: function (result) {
+				return result 
+				},
+				error: function (jqXHR, exc) {
+					
+				}
+			});
 		}
-		var deleteList = function (item) {
-			listSensor.push(item)
+
 		}
 		$("#btnaddsensor").on("click", function (event) {
 			var data = {
@@ -127,7 +148,7 @@
 				method: 'POST',
 				contentType: 'application/json',
 				dataType: "json",
-				headers:{
+				headers: {
 					token: localStorage.getItem('token'),
 				},
 				data: JSON.stringify(data),
@@ -146,7 +167,7 @@
 			});
 		})
 
-		$( function (event) {
+		$(function (event) {
 			var data = {
 				username: localStorage.getItem('username')
 			}
@@ -155,12 +176,12 @@
 				method: 'GET',
 				contentType: 'application/json',
 				dataType: "json",
-				headers:{
+				headers: {
 					token: localStorage.getItem('token'),
 				},
 				data: data,
 				success: function (result) {
-					result.map((element, i)=>{
+					result.map((element, i) => {
 						insertList(element)
 					})
 					$(".notify-failed").hide();
@@ -173,8 +194,6 @@
 				}
 			});
 		})
-	}
 
-	)
-
+	})
 </script>
