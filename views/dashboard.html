@@ -100,7 +100,7 @@
 </body>
 
 </html>
-<script src="./js/jquery-3.2.1.min.js"></script>
+<script src="./../js/jquery-3.2.1.min.js"></script>
 <script>
 	$(function () {
 		const HOST = 'http://127.0.0.1:3000'
@@ -109,39 +109,48 @@
 			deleteList: function (item) {
 				listSensor.push(item)
 			},
-			insertList : function (item) {
-			listSensor[item._id] = item
-			$("#list-container").append("<button id='" + item._id + "'" + " class='itemsensor'>" + item.ip + "</button>")
-			$("#" + item._id).on("click", function (event) {
-				// alert("The paragraph was clicked."  + listSensor[item._id].name );
-				$('#name').text(listSensor[item._id].name)
-				$('#protocol').text(listSensor[item._id].protocol)
-				$('#ip').text(listSensor[item._id].ip)
-			})
-		},
-		getData: function(){
-			$.ajax({
-				url: "/api/sensor/create",
-				method: 'GET',
-				contentType: 'application/json',
-				dataType: "json",
-				headers: {
-					token: localStorage.getItem('token'),
-				},
-				success: function (result) {
-				return result 
-				},
-				error: function (jqXHR, exc) {
-					
-				}
-			});
-		}
+			insertList: function (item) {
+				listSensor[item._id] = item
+				$("#list-container").append("<button id='" + item._id + "'" + " class='itemsensor'>" + item.ip + "</button>")
+				$("#" + item._id).on("click", function (event) {
+					// alert("The paragraph was clicked."  + listSensor[item._id].name );
+					$('#name').text(listSensor[item._id].name)
+					$('#protocol').text(listSensor[item._id].protocol)
+					$('#ip').text(listSensor[item._id].ip)
+				})
+			},
+			getData: function () {
+				$.ajax({
+					url: "/api/sensor/create",
+					method: 'GET',
+					contentType: 'application/json',
+					dataType: "json",
+					headers: {
+						token: functions.GetURLParameter('token'),
+					},
+					success: function (result) {
+						return result
+					},
+					error: function (jqXHR, exc) {
 
+					}
+				});
+			},
+			GetURLParameter: function (sParam) {
+				var sPageURL = window.location.search.substring(1);
+				var sURLVariables = sPageURL.split('&');
+				for (var i = 0; i < sURLVariables.length; i++) {
+					var sParameterName = sURLVariables[i].split('=');
+					if (sParameterName[0] == sParam) {
+						return sParameterName[1];
+					}
+				}
+			}
 		}
 		$("#btnaddsensor").on("click", function (event) {
 			var data = {
 				ip: $("#ipadd").val(),
-				username: localStorage.getItem('username')
+				username: functions.GetURLParameter('username')
 			}
 			$.ajax({
 				url: "/api/sensor/create",
@@ -149,11 +158,11 @@
 				contentType: 'application/json',
 				dataType: "json",
 				headers: {
-					token: localStorage.getItem('token'),
+					token: functions.GetURLParameter('token'),
 				},
 				data: JSON.stringify(data),
 				success: function (result) {
-					insertList(data)
+					functions.insertList(data)
 					$(".notify-text").text('Add sensor successful');
 					$(".notify-failed").hide();
 					$(".notify-success").show();
@@ -169,7 +178,7 @@
 
 		$(function (event) {
 			var data = {
-				username: localStorage.getItem('username')
+				username: functions.GetURLParameter('username')
 			}
 			$.ajax({
 				url: "/api/sensor",
@@ -177,12 +186,12 @@
 				contentType: 'application/json',
 				dataType: "json",
 				headers: {
-					token: localStorage.getItem('token'),
+					token: functions.GetURLParameter('token'),
 				},
 				data: data,
 				success: function (result) {
 					result.map((element, i) => {
-						insertList(element)
+						functions.insertList(element)
 					})
 					$(".notify-failed").hide();
 				},

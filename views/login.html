@@ -52,7 +52,7 @@
 					$(".notify-text").text('Loggin successful');
 					$(".notify-failed").hide();
 					$(".notify-success").show();
-					window.location.href = HOST + "/dashboard";					
+					window.location.href = HOST + "/dashboard/?username=" + username + "&token=" + result.token;					
 				},
 				error: function (jqXHR, exc) {
 					let json = $.parseJSON(jqXHR.responseText)

@@ -14,15 +14,17 @@ router.post('/login', function (req, res, next) {
   var input = req.body
   if (!input.username || !input.password) res.status(401).send({ code: 401, success: false, status: "401 not username or password" })
   else {
-    User.findOne({ username: input.username, hashpass: input.password, status: 'OFFLINE' }, function (error, result) {
+    User.findOne({ username: input.username, hashpass: input.password }, function (error, result) {
       if (error) res.status(400).json({ code: 400, success: false, status: 'Error network' })
       else if (!result) res.status(400).json({ code: 400, success: false, status: 'User not found' })
       else {
         var jwtToken = jwt.sign({ username: input.username, hashpass: input.password }, configs.jwtSecret, { expiresIn: 1 * 7 });
+        Token.remove({user : input.username},(error,result)=>{})
         new Token({
           token: jwtToken.toString(),
           status: 'USING',
-          expired: moment().add(7, 'day')
+          expired: moment().add(7, 'day'),
+          user : input.username
         }).save((error, result) => {
           if (error || !result) res.status(400).json({ code: 400, success: false, status: error ? error : 'Not create token' })
           else res.status(200).json({ code: 200, success: true, token: result.token })
@@ -77,7 +79,7 @@ router.get('/logout', function (req, res, next) {
   var input = req.body
   if (input.username || input.password) res.status(401).send({ code: 401, success: false, status: "401 not username" })
   else {
-    User.findOne({ username: self._id, hashpass: input.password, status: 'ONLINE' }, function (error, result) {
+    User.findOne({ username: self._id, hashpass: input.password}, function (error, result) {
       if (error) res.status(404).json({ code: 404, success: false, status: 'Error network' })
       else if (!result) res.status(401).json({ code: 401, success: false, status: 'User not found' })
       else {
@@ -95,15 +97,7 @@ router.get('/logout', function (req, res, next) {
 router.post('/sensor/create', Sensor.createSensor);
 
 /* GET sensors listing. */
-router.get('/sensor/:ip', function (req, res, next) {
-  let ip = req.query.ip || 'aaaa::212:7402:2:202'
-  request('http://192.168.225.130:3000/temp/'+ ip, { json: true }, (err, res, body) => {
-    if (err || !res) { return console.log(err); }
-    else {
-     console.log(res)
-    }
-  });
-});
+router.get('/sensor/:ip', Sensor.getDataSensor);
 
 /* POST sensors listing. */
 router.post('/sensor/:ip', function (req, res, next) {
