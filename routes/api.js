@@ -97,7 +97,7 @@ router.get('/logout', function (req, res, next) {
 router.post('/sensor/create', Sensor.createSensor);
 
 /* GET sensors listing. */
-router.get('/sensor/:ip', Sensor.getDataSensor);
+router.get('/sensor/get', Sensor.getDataSensor);
 
 /* POST sensors listing. */
 router.post('/sensor/:ip', function (req, res, next) {

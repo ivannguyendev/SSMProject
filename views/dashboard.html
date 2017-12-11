@@ -105,6 +105,7 @@
 	$(function () {
 		const HOST = 'http://127.0.0.1:3000'
 		var listSensor = []
+		var observe = setInterval(function(){}, 3000)
 		var functions = {
 			deleteList: function (item) {
 				listSensor.push(item)
@@ -117,11 +118,22 @@
 					$('#name').text(listSensor[item._id].name)
 					$('#protocol').text(listSensor[item._id].protocol)
 					$('#ip').text(listSensor[item._id].ip)
+					clearInterval(observe);
+					observe = setInterval(function(){
+						functions.getData(listSensor[item._id].ip, listSensor[item._id].protocol, 
+						function(err, res){
+							if(res && res.message) $('#datasensor').html(res.message)
+							else {
+								console.log(err)
+								$('#datasensor').html('error ' + err.code)
+							}
+						})
+					}, 3000)
 				})
 			},
-			getData: function () {
+			getData: function (ip, protocol, cb) {
 				$.ajax({
-					url: "/api/sensor/create",
+					url: "/api/sensor/get?ip=" + ip + '&protocol=' + protocol,
 					method: 'GET',
 					contentType: 'application/json',
 					dataType: "json",
@@ -129,10 +141,11 @@
 						token: functions.GetURLParameter('token'),
 					},
 					success: function (result) {
-						return result
+						cb(null,result)
 					},
 					error: function (jqXHR, exc) {
-
+						let json = $.parseJSON(jqXHR.responseText)
+						cb(json, null)
 					}
 				});
 			},
