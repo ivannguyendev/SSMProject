@@ -86,9 +86,7 @@ module.exports = {
         request(configs.serverContiki +'/temp/?ip='+ input.ip + "&protocol=" + input.protocol, { json: true }, (error, result, body) => {
             if (error || body.code == '404')  { res.status(404).json( body ) }
             else {
-                let array = result.body.split('\n')[2]
-                array = array.replace('</body></html>','')
-                res.status(200).json({ message : array})
+                res.status(200).json({ message : body})
             } 
           });
         
