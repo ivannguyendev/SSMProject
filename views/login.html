@@ -5,6 +5,8 @@
 	<title>Login</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
 	<meta charset="utf-8"/>
+	<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -13,11 +15,12 @@
 <body>
 	<style>
 			#login{
-				margin-left: 40%;
-
+				margin-left: 38%;
+				width: 15%;
 			}
 			.dn, #font{
 				margin-left: 35%;
+				
 			}
 			.formlogin {
 				margin-left: 20%;
@@ -30,7 +33,7 @@
 		<div class="nav-wrapper pink darken-4 #ff4081"><a id="font" class="brand-logo">Secure Service Manager </a></div>
 	</nav>
 	<form class="formlogin" action="/api/login">
-		<h5 class="dn">Đăng nhập</h5>
+		<h4 class="dn">Đăng nhập</h4>
 			User name:
 		<br>
 		<input id='username' type="text" name="username" class="col s11 m8 l6">
@@ -52,7 +55,6 @@
 </body>
 
 </html>
-<script src="./js/jquery-3.2.1.min.js"></script>
 <script>
 	$(function () {
 		const HOST = 'http://127.0.0.1:3000'
@@ -73,18 +75,12 @@
 				success: function (result) {
 					localStorage.setItem('token',result.token)
 					localStorage.setItem('username', username)
-					$(".notify-text").text('Loggin successful');
-					$(".notify-failed").hide();
-					$(".notify-success").show();
 					Materialize.toast('Loggin successful', 4000);
 			
 					window.location.href = HOST + "/dashboard/?username=" + username + "&token=" + result.token;					
 				},
 				error: function (jqXHR, exc) {
 					let json = $.parseJSON(jqXHR.responseText)
-					$(".notify-text").text(json['status']);
-					$(".notify-success").hide();
-					$(".notify-failed").show();
 					Materialize.toast(json['status'], 4000);
 				}
 			});
