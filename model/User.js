@@ -5,7 +5,6 @@ var token = require('./Token')
 var userSchema = new mongoose.Schema({
     username: String,
     hashpass: String,
-    status: {type: String, options: 'ONLINE, OFFLINE'},
     sensor: [{type: mongoose.Schema.Types.ObjectId, ref: 'Sensor'}],
 });
 
