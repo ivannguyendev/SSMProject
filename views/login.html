@@ -76,12 +76,9 @@
 					$(".notify-text").text('Loggin successful');
 					$(".notify-failed").hide();
 					$(".notify-success").show();
-<<<<<<< HEAD
 					Materialize.toast('Loggin successful', 4000);
-					window.location.href = HOST + "/dashboard";					
-=======
+			
 					window.location.href = HOST + "/dashboard/?username=" + username + "&token=" + result.token;					
->>>>>>> f07c8ffaf075e7d6aff456580ce2aae27c91b6c7
 				},
 				error: function (jqXHR, exc) {
 					let json = $.parseJSON(jqXHR.responseText)
